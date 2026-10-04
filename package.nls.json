@@ -1,0 +1,22 @@
+{
+  "description": "Converts Word documents (.docx, and old .doc through Word or LibreOffice) to Markdown, keeping headings, formatting, list numbering, the table of contents (as links to the headings), bookmarks and cross-references, tables with merged cells, footnotes, comments, tracked changes and images.",
+  "command.convert.title": "Convert to Markdown",
+  "config.tables.description": "How tables are written. `auto`: Markdown (GFM) tables, and HTML tables for those with merged cells or tables inside cells, which GFM cannot express.",
+  "config.tables.auto": "GFM tables; HTML only where cells are merged or nested",
+  "config.tables.gfm": "Always GFM tables (merged cells become empty cells)",
+  "config.tables.html": "Always HTML tables",
+  "config.trackedChanges.description": "What to do with tracked changes (revisions) in the document.",
+  "config.trackedChanges.accept": "Final text: insertions kept, deletions dropped",
+  "config.trackedChanges.reject": "Original text: insertions dropped, deletions kept",
+  "config.trackedChanges.markup": "Both, marked with <ins> and <del>",
+  "config.comments.description": "What to do with Word comments.",
+  "config.comments.footnotes": "As footnotes with the author's name",
+  "config.comments.omit": "Leave them out",
+  "config.imagesFolder.description": "Folder for the document's images, next to the Markdown file. `{name}` is the document name without extension.",
+  "config.openAfterConversion.description": "What to open after converting a single document.",
+  "config.openAfterConversion.editor": "The Markdown file in the editor",
+  "config.openAfterConversion.preview": "The Markdown preview",
+  "config.openAfterConversion.none": "Nothing, just a notification",
+  "config.libreOfficePath.description": "Path to LibreOffice's `soffice` (`soffice.exe` on Windows), used for old `.doc` files when Word is not available. Empty: the standard install locations and `PATH`.",
+  "capabilities.untrustedWorkspaces": "In Restricted Mode the LibreOffice path from workspace settings is ignored."
+}

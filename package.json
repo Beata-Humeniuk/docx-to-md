@@ -1,0 +1,147 @@
+{
+  "name": "docx-to-md",
+  "displayName": "Word to Markdown",
+  "description": "%description%",
+  "version": "0.1.0",
+  "publisher": "beatahumeniuk",
+  "icon": "media/icon.png",
+  "license": "MIT",
+  "author": {
+    "name": "Beata Humeniuk"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Beata-Humeniuk/docx-to-md.git"
+  },
+  "homepage": "https://github.com/Beata-Humeniuk/docx-to-md#readme",
+  "bugs": {
+    "url": "https://github.com/Beata-Humeniuk/docx-to-md/issues"
+  },
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "%capabilities.untrustedWorkspaces%",
+      "restrictedConfigurations": [
+        "docxToMd.libreOfficePath"
+      ]
+    }
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "word",
+    "docx",
+    "doc",
+    "rtf",
+    "markdown",
+    "converter",
+    "table of contents"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "commands": [
+      {
+        "command": "docxToMd.convert",
+        "title": "%command.convert.title%",
+        "category": "Word to Markdown"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "docxToMd.convert",
+          "when": "resourceExtname =~ /^\\.(docx|docm|dotx|dotm|doc|dot|rtf)$/i",
+          "group": "7_modification"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Word to Markdown",
+      "properties": {
+        "docxToMd.tables": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "gfm",
+            "html"
+          ],
+          "enumDescriptions": [
+            "%config.tables.auto%",
+            "%config.tables.gfm%",
+            "%config.tables.html%"
+          ],
+          "default": "auto",
+          "markdownDescription": "%config.tables.description%"
+        },
+        "docxToMd.trackedChanges": {
+          "type": "string",
+          "enum": [
+            "accept",
+            "reject",
+            "markup"
+          ],
+          "enumDescriptions": [
+            "%config.trackedChanges.accept%",
+            "%config.trackedChanges.reject%",
+            "%config.trackedChanges.markup%"
+          ],
+          "default": "accept",
+          "markdownDescription": "%config.trackedChanges.description%"
+        },
+        "docxToMd.comments": {
+          "type": "string",
+          "enum": [
+            "footnotes",
+            "omit"
+          ],
+          "enumDescriptions": [
+            "%config.comments.footnotes%",
+            "%config.comments.omit%"
+          ],
+          "default": "footnotes",
+          "markdownDescription": "%config.comments.description%"
+        },
+        "docxToMd.imagesFolder": {
+          "type": "string",
+          "default": "{name}_images",
+          "markdownDescription": "%config.imagesFolder.description%"
+        },
+        "docxToMd.openAfterConversion": {
+          "type": "string",
+          "enum": [
+            "editor",
+            "preview",
+            "none"
+          ],
+          "enumDescriptions": [
+            "%config.openAfterConversion.editor%",
+            "%config.openAfterConversion.preview%",
+            "%config.openAfterConversion.none%"
+          ],
+          "default": "editor",
+          "markdownDescription": "%config.openAfterConversion.description%"
+        },
+        "docxToMd.libreOfficePath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "%config.libreOfficePath.description%"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/extension.js --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --minify --charset=utf8",
+    "vscode:prepublish": "npm run build",
+    "test": "node test/nls-test.js && node test/zip-xml-test.js && node test/numbering-test.js && node test/convert-test.js && node test/files-test.js && node test/doc-test.js",
+    "package": "npm run build && vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "3.9.2",
+    "esbuild": "^0.21.5"
+  }
+}
