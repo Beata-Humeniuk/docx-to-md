@@ -2,7 +2,7 @@
   "name": "docx-to-md",
   "displayName": "Word to Markdown",
   "description": "%description%",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "beatahumeniuk",
   "icon": "media/icon.png",
   "license": "MIT",
@@ -137,7 +137,7 @@
   "scripts": {
     "build": "esbuild src/extension.js --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --minify --charset=utf8",
     "vscode:prepublish": "npm run build",
-    "test": "node test/nls-test.js && node test/zip-xml-test.js && node test/numbering-test.js && node test/convert-test.js && node test/files-test.js && node test/doc-test.js",
+    "test": "node --test",
     "package": "npm run build && vsce package --no-dependencies"
   },
   "devDependencies": {

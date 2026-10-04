@@ -1,0 +1,25 @@
+'use strict';
+
+module.exports = {
+  'action.overwrite': 'Overwrite',
+  'action.overwriteAll': 'Overwrite all',
+  'action.skip': 'Skip',
+  'action.openSettings': 'Open settings',
+  'dialog.openLabel': 'Convert to Markdown',
+  'dialog.filter': 'Word documents',
+  'prompt.overwrite': '{file} already exists. Overwrite it?',
+  'progress.converting': 'Converting {file} to Markdown…',
+  'info.convertedOne': 'Saved {file}.',
+  'info.converted': 'Converted {count} {documents} to Markdown.',
+  'warn.lossy': '{file}: not carried over — {items}.',
+  'warn.vectorImages': '{file}: {count} {images} in EMF/WMF format — saved next to the Markdown, but Markdown previews cannot display that format.',
+  'error.notWord': '{file} is not a Word document (.docx or .doc).',
+  'error.failed': 'Could not convert {file}: {reason}',
+  'error.docNotLocal': '{file} is not on this computer’s disk. Old .doc files are read by Word or LibreOffice, which need a local file.',
+  'error.noDocConverter': 'Cannot read the old .doc format of {file}: that needs Microsoft Word (Windows) or LibreOffice, and neither could be started. Install LibreOffice or point docxToMd.libreOfficePath at soffice — or open the file in Word and save it as .docx.',
+  'plural.document': ['document', 'documents'],
+  'plural.image': ['image', 'images'],
+  'plural.chart': ['chart', 'charts'],
+  'plural.smartArt': ['SmartArt graphic', 'SmartArt graphics'],
+  'plural.embeddedDocument': ['embedded document', 'embedded documents'],
+};

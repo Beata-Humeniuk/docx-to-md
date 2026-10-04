@@ -1,0 +1,25 @@
+'use strict';
+
+module.exports = {
+  'action.overwrite': 'Nadpisz',
+  'action.overwriteAll': 'Nadpisz wszystkie',
+  'action.skip': 'Pomiń',
+  'action.openSettings': 'Otwórz ustawienia',
+  'dialog.openLabel': 'Konwertuj do Markdown',
+  'dialog.filter': 'Dokumenty Worda',
+  'prompt.overwrite': '{file} już istnieje. Nadpisać?',
+  'progress.converting': 'Konwertuję {file} do Markdown…',
+  'info.convertedOne': 'Zapisano {file}.',
+  'info.converted': 'Skonwertowano do Markdown: {count} {documents}.',
+  'warn.lossy': '{file}: nie przeniesiono — {items}.',
+  'warn.vectorImages': '{file}: {count} {images} w formacie EMF/WMF — zapisane obok pliku Markdown, ale podgląd Markdown tego formatu nie wyświetla.',
+  'error.notWord': '{file} nie jest dokumentem Worda (.docx ani .doc).',
+  'error.failed': 'Nie udało się skonwertować {file}: {reason}',
+  'error.docNotLocal': '{file} nie leży na dysku tego komputera. Stare pliki .doc czyta Word albo LibreOffice, a one potrzebują pliku lokalnego.',
+  'error.noDocConverter': 'Nie mogę odczytać starego formatu .doc pliku {file}: do tego potrzebny jest Microsoft Word (Windows) albo LibreOffice, a żadnego z nich nie udało się uruchomić. Zainstaluj LibreOffice albo wskaż soffice w docxToMd.libreOfficePath — albo otwórz plik w Wordzie i zapisz jako .docx.',
+  'plural.document': ['dokument', 'dokumenty', 'dokumentów'],
+  'plural.image': ['obraz', 'obrazy', 'obrazów'],
+  'plural.chart': ['wykres', 'wykresy', 'wykresów'],
+  'plural.smartArt': ['grafika SmartArt', 'grafiki SmartArt', 'grafik SmartArt'],
+  'plural.embeddedDocument': ['osadzony dokument', 'osadzone dokumenty', 'osadzonych dokumentów'],
+};
