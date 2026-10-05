@@ -133,6 +133,32 @@ check('cells with several paragraphs and bullets use <br>', () => {
   has(out, '| line 1<br>line 2 |');
 });
 
+check('indentation inside cells is kept as non-breaking spaces', () => {
+  const cell = (...paras) => '<w:tc><w:tcPr/>' + paras.join('') + '</w:tc>';
+  const body = '<w:tbl><w:tr>' + cell(p(r('H'))) + '</w:tr><w:tr>' + cell(
+    p(r('top')),
+    p(r('  two spaces')),
+    p(r('indented'), '<w:ind w:left="360"/>'),
+    p(r('deeper'), '<w:ind w:left="720"/>'),
+    p(r('tabbed'), '<w:ind w:left="720"/>').replace('<w:t xml:space="preserve">tabbed', '<w:t xml:space="preserve">\ttabbed')) +
+    '</w:tr></w:tbl>';
+  const out = md(body);
+  has(out, '| top<br>&nbsp;&nbsp;two spaces<br>&nbsp;&nbsp;indented<br>&nbsp;&nbsp;&nbsp;&nbsp;deeper<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tabbed |');
+  const html = md(body, {}, { tables: 'html' });
+  has(html, '<td>top<br>&nbsp;&nbsp;two spaces<br>&nbsp;&nbsp;indented<br>');
+});
+
+check('nested lists inside cells keep their level', () => {
+  const numbering = '<w:abstractNum w:abstractNumId="1">' +
+    '<w:lvl w:ilvl="0"><w:start w:val="1"/><w:numFmt w:val="bullet"/><w:lvlText w:val="•"/><w:pPr><w:ind w:left="360"/></w:pPr></w:lvl>' +
+    '<w:lvl w:ilvl="1"><w:start w:val="1"/><w:numFmt w:val="bullet"/><w:lvlText w:val="o"/><w:pPr><w:ind w:left="720"/></w:pPr></w:lvl>' +
+    '</w:abstractNum><w:num w:numId="1"><w:abstractNumId w:val="1"/></w:num>';
+  const item = (ilvl, text) => p(r(text), '<w:numPr><w:ilvl w:val="' + ilvl + '"/><w:numId w:val="1"/></w:numPr>');
+  const body = '<w:tbl><w:tr><w:tc><w:tcPr/>' + p(r('H')) + '</w:tc></w:tr><w:tr><w:tc><w:tcPr/>' +
+    item(0, 'one') + item(1, 'one-a') + item(1, 'one-b') + item(0, 'two') + p(r('plain')) + '</w:tc></w:tr></w:tbl>';
+  has(md(body, { numbering }), '| • one<br>&nbsp;&nbsp;• one-a<br>&nbsp;&nbsp;• one-b<br>• two<br>plain |');
+});
+
 check('merged cells switch to an HTML table with colspan/rowspan', () => {
   const tc = (t, pr = '') => '<w:tc><w:tcPr>' + pr + '</w:tcPr>' + p(r(t)) + '</w:tc>';
   const body = '<w:tbl>' +

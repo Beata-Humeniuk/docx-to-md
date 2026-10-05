@@ -366,8 +366,12 @@ class Renderer {
     return this.gfmTable(rows, width);
   }
 
+  // A cell has no block structure in Markdown, so indentation is kept as
+  // non-breaking spaces: the paragraph's left indent (one step per 360
+  // twips), a list item's nesting, and the spaces the text itself starts with.
   cellText(blocks, html) {
     const parts = [];
+    const lists = [];
     for (const b of blocks) {
       if (b.type === 'table') {
         const { rows } = this.grid(b);
@@ -375,13 +379,25 @@ class Renderer {
         continue;
       }
       if (b.type !== 'paragraph') continue;
+      const lead = /^[ \u00a0\t]*/.exec(plainText(b.inlines))[0].replace(/\t/g, '    ').length;
       let text = this.inlines(b.inlines, html ? { html: true } : { table: true }).trim();
       if (!text) continue;
       if (b.code && !html) text = codeSpan(codeText(b.inlines).replace(/\n/g, ' '));
       if (b.heading) text = html ? '<strong>' + text + '</strong>' : '**' + text + '**';
-      if (b.list && b.list.kind === 'bullet') text = '• ' + text;
-      else if (b.list && b.list.kind !== 'none') text = (html ? escapeHtml(b.list.label) : escapeText(b.list.label, true)) + ' ' + text;
-      parts.push(text.replace(/\n/g, html ? '<br>\n' : ' '));
+      let steps = 0;
+      if (b.list && b.list.kind !== 'none') {
+        const depth = b.list.depth !== undefined ? b.list.depth : 0;
+        while (lists.length && lists[lists.length - 1] >= depth) lists.pop();
+        steps = lists.length;
+        lists.push(depth);
+        const label = b.list.kind === 'bullet' ? '•' : html ? escapeHtml(b.list.label) : escapeText(b.list.label, true);
+        text = label + ' ' + text;
+      } else {
+        lists.length = 0;
+        steps = Math.max(0, Math.round((b.indent || 0) / 360));
+      }
+      const pad = '&nbsp;'.repeat(steps * 2 + lead);
+      parts.push(pad + text.replace(/\n/g, html ? '<br>\n' : ' '));
     }
     return parts.join('<br>');
   }

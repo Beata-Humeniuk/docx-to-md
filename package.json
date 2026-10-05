@@ -2,7 +2,7 @@
   "name": "docx-to-md",
   "displayName": "Word to Markdown",
   "description": "%description%",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "beatahumeniuk",
   "icon": "media/icon.png",
   "license": "MIT",

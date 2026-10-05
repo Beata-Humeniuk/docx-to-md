@@ -224,6 +224,9 @@ class Converter {
       }
     }
 
+    const paragraphIndent = indentOf(pPr);
+    block.indent = paragraphIndent !== null ? paragraphIndent : info.indent;
+
     if (info.tocHeading) block.tocHeading = true;
     else if (info.code) block.code = true;
     else if (info.quote) block.quote = true;
