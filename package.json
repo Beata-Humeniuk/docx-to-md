@@ -2,7 +2,7 @@
   "name": "docx-to-md",
   "displayName": "Word to Markdown",
   "description": "%description%",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "publisher": "beatahumeniuk",
   "icon": "media/icon.png",
   "license": "MIT",
@@ -105,6 +105,11 @@
           ],
           "default": "footnotes",
           "markdownDescription": "%config.comments.description%"
+        },
+        "docxToMd.chooseSections": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "%config.chooseSections.description%"
         },
         "docxToMd.imagesFolder": {
           "type": "string",

@@ -3,7 +3,7 @@
 const vscode = require('vscode');
 const path = require('path');
 const { forLanguage } = require('./nls');
-const { convertDocx } = require('./index');
+const { readDocument, renderDocument } = require('./index');
 const { docToDocx } = require('./docConversion');
 const { sniff, isWordFile, targetsFor, WORD_EXTENSIONS } = require('./files');
 
@@ -67,6 +67,25 @@ function reportWarnings(name, warnings) {
   }
 }
 
+// Every section starts checked; unchecking one leaves out its subsections
+// too. Returns the indices to exclude, or null when the picker was dismissed.
+async function pickSections(sections, name) {
+  const items = sections.map((s, index) => ({
+    label: '\u2003'.repeat(s.level - 1) + s.text,
+    description: 'H' + s.level,
+    picked: true,
+    index,
+  }));
+  const picked = await vscode.window.showQuickPick(items, {
+    canPickMany: true,
+    title: nls.t('pick.sectionsTitle', { file: name }),
+    placeHolder: nls.t('pick.sectionsPlaceholder'),
+  });
+  if (!picked) return null;
+  const kept = new Set(picked.map((i) => i.index));
+  return items.map((i) => i.index).filter((i) => !kept.has(i));
+}
+
 async function convertOne(uri, state) {
   const name = path.basename(uri.path);
   const targets = targetsFor(uri.path, config().get('imagesFolder'));
@@ -82,18 +101,21 @@ async function convertOne(uri, state) {
     else if (choice !== nls.t('action.overwrite')) return null;
   }
 
-  const result = await vscode.window.withProgress(
-    { location: vscode.ProgressLocation.Notification, title: nls.t('progress.converting', { file: name }) },
-    async () => {
-      const bytes = await docxBytes(uri, name);
-      const settings = config();
-      return convertDocx(bytes, {
-        imageDir: targets.imagesLink,
-        tables: settings.get('tables'),
-        trackedChanges: settings.get('trackedChanges'),
-        comments: settings.get('comments'),
-      });
-    });
+  const settings = config();
+  const options = {
+    imageDir: targets.imagesLink,
+    tables: settings.get('tables'),
+    trackedChanges: settings.get('trackedChanges'),
+    comments: settings.get('comments'),
+  };
+  const progress = { location: vscode.ProgressLocation.Notification, title: nls.t('progress.converting', { file: name }) };
+  const doc = await vscode.window.withProgress(progress, async () => readDocument(await docxBytes(uri, name), options));
+  if (settings.get('chooseSections') && doc.sections.length > 1) {
+    const excluded = await pickSections(doc.sections, name);
+    if (!excluded) return null;
+    options.excludeSections = excluded;
+  }
+  const result = await vscode.window.withProgress(progress, async () => renderDocument(doc, options));
 
   if (result.images.length) {
     const dirUri = uri.with({ path: targets.imagesDir });

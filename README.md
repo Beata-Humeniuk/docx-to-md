@@ -20,6 +20,11 @@ opened by Word or LibreOffice on your computer.
 `<name>_images/`. If the Markdown file already exists, the extension asks
 before overwriting it.
 
+A document with headings first shows its outline as a list of checkboxes:
+uncheck the sections you do not want in the Markdown. A section goes
+together with its subsections; the table of contents, footnotes and images
+follow what was kept. `docxToMd.chooseSections` turns the list off.
+
 ## What is kept
 
 | In Word | In Markdown |
@@ -49,6 +54,7 @@ the full list, the table of contents, tables and old `.doc` files.
 | `docxToMd.tables` | `auto` | `auto` uses GFM tables and HTML only for merged or nested cells; `gfm` or `html` forces one format. |
 | `docxToMd.trackedChanges` | `accept` | `accept` keeps the final text, `reject` the original, `markup` both with `<ins>`/`<del>`. |
 | `docxToMd.comments` | `footnotes` | Comments as footnotes with the author, or `omit`. |
+| `docxToMd.chooseSections` | `true` | Show the outline as checkboxes before converting. |
 | `docxToMd.imagesFolder` | `{name}_images` | Image folder next to the Markdown file; `{name}` is the document name. |
 | `docxToMd.openAfterConversion` | `editor` | After converting one document: `editor`, `preview` or `none`. |
 | `docxToMd.libreOfficePath` | *(empty)* | Path to LibreOffice's `soffice`, used for `.doc` files when Word is not available. |
