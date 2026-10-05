@@ -17,6 +17,9 @@ const EN = {
 
   'prompt.overwrite': '{file} already exists. Overwrite it?',
 
+  'pick.sectionsTitle': '{file}: sections to convert',
+  'pick.sectionsPlaceholder': 'Uncheck the sections to leave out; a section goes together with its subsections.',
+
   'progress.converting': 'Converting {file} to Markdown…',
 
   'info.convertedOne': 'Saved {file}.',
@@ -47,6 +50,9 @@ const PL = {
   'dialog.filter': 'Dokumenty Worda',
 
   'prompt.overwrite': '{file} już istnieje. Nadpisać?',
+
+  'pick.sectionsTitle': '{file}: sekcje do konwersji',
+  'pick.sectionsPlaceholder': 'Odznacz sekcje, które mają wypaść; sekcja idzie razem ze swoimi podpunktami.',
 
   'progress.converting': 'Konwertuję {file} do Markdown…',
 

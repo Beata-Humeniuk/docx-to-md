@@ -12,6 +12,7 @@
   "config.comments.description": "What to do with Word comments.",
   "config.comments.footnotes": "As footnotes with the author's name",
   "config.comments.omit": "Leave them out",
+  "config.chooseSections.description": "Before converting a document with headings, show its outline as checkboxes: unchecked sections (with their subsections) are left out of the Markdown.",
   "config.imagesFolder.description": "Folder for the document's images, next to the Markdown file. `{name}` is the document name without extension.",
   "config.openAfterConversion.description": "What to open after converting a single document.",
   "config.openAfterConversion.editor": "The Markdown file in the editor",

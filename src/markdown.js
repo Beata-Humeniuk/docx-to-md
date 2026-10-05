@@ -495,4 +495,4 @@ function renderMarkdown(model, options) {
   return new Renderer(model, options).render();
 }
 
-module.exports = { renderMarkdown, slugify, escapeText, escapeLineStart };
+module.exports = { renderMarkdown, slugify, escapeText, escapeLineStart, plainText, normalizeSpaces };

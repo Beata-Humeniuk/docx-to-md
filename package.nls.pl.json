@@ -12,6 +12,7 @@
   "config.comments.description": "Co zrobić z komentarzami Worda.",
   "config.comments.footnotes": "Jako przypisy z nazwiskiem autora",
   "config.comments.omit": "Pominąć",
+  "config.chooseSections.description": "Przed konwersją dokumentu z nagłówkami pokaż jego spis treści jako checkboxy: odznaczone sekcje (razem z podpunktami) nie trafiają do Markdown.",
   "config.imagesFolder.description": "Folder na obrazy z dokumentu, obok pliku Markdown. `{name}` to nazwa dokumentu bez rozszerzenia.",
   "config.openAfterConversion.description": "Co otworzyć po konwersji jednego dokumentu.",
   "config.openAfterConversion.editor": "Plik Markdown w edytorze",

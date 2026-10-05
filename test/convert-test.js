@@ -5,7 +5,7 @@
 
 const { check, eq, has, lacks, done } = require('./harness');
 const { docx, r, p, styled, HEADING_STYLES } = require('./docx-builder');
-const { convertDocx } = require('../src/index');
+const { convertDocx, readDocument, renderDocument } = require('../src/index');
 
 const md = (body, opts = {}, conv = {}) => convertDocx(docx(Object.assign({ body, styles: HEADING_STYLES }, opts)), conv).markdown;
 
@@ -243,6 +243,24 @@ check('symbols from Symbol/Wingdings fonts', () => {
 
 check('empty paragraphs vanish, spacing between blocks is one blank line', () => {
   eq(md(p(r('a')) + p('') + p(r('   ')) + p(r('b'))), 'a\n\nb\n');
+});
+
+check('sections can be left out, with their subsections, notes and images', () => {
+  const drawing = '<w:r><w:drawing><wp:inline><wp:docPr id="1" name="P" descr="pic"/><a:graphic><a:graphicData><pic:pic><pic:blipFill>' +
+    '<a:blip r:embed="rIdI1"/></pic:blipFill></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>';
+  const footnotes = '<w:footnote w:id="1">' + p(r('note')) + '</w:footnote>';
+  const doc = readDocument(docx({
+    body: p(r('Preamble')) + styled('Heading1', r('Keep')) + p(r('kept text')) +
+      styled('Heading1', r('Drop')) + p(r('dropped') + '<w:r><w:footnoteReference w:id="1"/></w:r>') + styled('Heading2', r('Drop child')) + p(drawing) +
+      styled('Heading1', r('Last')) + p(fld('TOC \\o "1-2"', r(''))),
+    styles: HEADING_STYLES, footnotes,
+    rels: [{ id: 'rIdI1', type: 'image', target: 'media/image1.png' }], media: { 'image1.png': Buffer.from([1]) },
+  }));
+  eq(doc.sections.map((s) => s.level + ':' + s.text + ':' + s.start + '-' + s.end).join(' '), '1:Keep:1-3 1:Drop:3-7 2:Drop child:5-7 1:Last:7-9');
+  const out = renderDocument(doc, { excludeSections: [1] });
+  eq(out.markdown, 'Preamble\n\n# Keep\n\nkept text\n\n# Last\n\n- [Keep](#keep)\n- [Last](#last)\n');
+  eq(out.images.length, 0);
+  eq(renderDocument(doc, {}).images.length, 1);
 });
 
 check('an unreadable package is reported as not a docx', () => {
