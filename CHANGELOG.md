@@ -3,6 +3,15 @@
 This file lists user-visible changes to Word to Markdown. The project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-10-05
+
+### Added
+
+- Before converting a document with headings, its outline is shown as
+  checkboxes; unchecked sections are left out together with their
+  subsections, and the table of contents, notes and images follow what was
+  kept. The `docxToMd.chooseSections` setting turns the picker off.
+
 ## [0.1.1] - 2026-10-05
 
 ### Fixed
