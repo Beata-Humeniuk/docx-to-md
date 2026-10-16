@@ -72,7 +72,7 @@ function normalizeSpaces(s) {
 class Renderer {
   constructor(model, options = {}) {
     this.model = model;
-    this.options = Object.assign({ tables: 'auto', imageDir: 'images' }, options);
+    this.options = Object.assign({ tables: 'auto', imageDir: 'images', comments: 'inline' }, options);
     this.noteNumbers = new Map();
     this.noteOrder = [];
     this.mdNotes = new Set();
@@ -203,6 +203,14 @@ class Renderer {
       } else if (n.t === 'note') {
         const note = this.model.notes.get(n.kind + ':' + n.id);
         if (!note) continue;
+        if (note.kind === 'comment' && this.options.comments === 'inline') {
+          // In a heading the comment would become part of its text and its
+          // anchor; it goes to a paragraph after the heading instead.
+          if (env.heading) { if (env.comments) env.comments.push(note); continue; }
+          closeTo(new Set());
+          out += (out && !/\s$/.test(out) ? ' ' : '') + this.inlineComment(note, env);
+          continue;
+        }
         const label = this.noteLabel(n);
         if (env.html) {
           out += '<sup>' + escapeHtml(label) + '</sup>';
@@ -214,6 +222,28 @@ class Renderer {
     }
     closeTo(new Set());
     return out;
+  }
+
+  // [💬 **Author:** text] — the closing bracket is escaped so that text
+  // following it, like "(see …)", cannot turn the comment into a link.
+  inlineComment(note, env) {
+    const paras = [];
+    for (const b of note.blocks) {
+      if (b.type === 'table') { paras.push(this.cellText([b], !!env.html)); continue; }
+      if (b.type !== 'paragraph') continue;
+      const t = this.inlines(b.inlines, { html: env.html, table: env.table }).replace(/\\\n/g, '<br>').trim();
+      if (t) paras.push(t);
+    }
+    let body = paras.join('<br>');
+    if (note.author) {
+      const author = env.html ? '<strong>' + escapeHtml(note.author) + ':</strong>' : '**' + escapeText(note.author, env.table) + ':**';
+      body = author + (body ? ' ' + body : '');
+    }
+    return '[💬' + (body ? ' ' + body : '') + (env.html ? ']' : '\\]');
+  }
+
+  headingComments(notes) {
+    return notes.map((note) => this.inlineComment(note, {})).join('<br>');
   }
 
   // --- blocks --------------------------------------------------------------
@@ -262,12 +292,14 @@ class Renderer {
       }
       if (b.heading) {
         list = [];
-        let text = normalizeSpaces(this.inlines(b.inlines, { heading: true }));
+        const comments = [];
+        let text = normalizeSpaces(this.inlines(b.inlines, { heading: true, comments }));
         const label = b.list && b.list.kind !== 'bullet' ? escapeText(b.list.label) + ' ' : '';
         text = (label + text).trim();
         if (!text) continue;
         if (/#$/.test(text)) text = text.slice(0, -1) + '\\#';
         chunks.push({ text: '#'.repeat(b.heading) + ' ' + text });
+        if (comments.length) chunks.push({ text: this.headingComments(comments) });
         continue;
       }
 
@@ -277,7 +309,9 @@ class Renderer {
 
       if (b.tocHeading) {
         list = [];
-        chunks.push({ text: '**' + normalizeSpaces(this.inlines(b.inlines, { heading: true })) + '**' });
+        const comments = [];
+        chunks.push({ text: '**' + normalizeSpaces(this.inlines(b.inlines, { heading: true, comments })) + '**' });
+        if (comments.length) chunks.push({ text: this.headingComments(comments) });
         continue;
       }
       if (b.list && b.list.kind !== 'none') {
