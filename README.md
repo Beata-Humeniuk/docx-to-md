@@ -39,7 +39,8 @@ follow what was kept. `docxToMd.chooseSections` turns the list off.
 | Underline, highlight, superscript, subscript | `<u>`, `<mark>`, `<sup>`, `<sub>` |
 | Monospaced text, code styles, quotes | `` `code` ``, fenced code blocks, `> quotes` |
 | Tables | GFM tables; HTML tables where cells are merged or nested |
-| Footnotes, endnotes, comments | GFM footnotes (`[^1]`, comments as `[^c1]` with the author) |
+| Footnotes, endnotes | GFM footnotes (`[^1]`) |
+| Comments | the commented text as `<mark>…</mark>`, followed by `[💬 **Author:** comment]` |
 | Tracked changes | final text, original text, or both marked up |
 | Images | files in `<name>_images/`, linked with Word's alt text |
 
@@ -53,7 +54,7 @@ the full list, the table of contents, tables and old `.doc` files.
 |---|---|---|
 | `docxToMd.tables` | `auto` | `auto` uses GFM tables and HTML only for merged or nested cells; `gfm` or `html` forces one format. |
 | `docxToMd.trackedChanges` | `accept` | `accept` keeps the final text, `reject` the original, `markup` both with `<ins>`/`<del>`. |
-| `docxToMd.comments` | `footnotes` | Comments as footnotes with the author, or `omit`. |
+| `docxToMd.comments` | `inline` | `inline` shows each comment next to the highlighted text it is about; `footnotes` as `[^c1]` footnotes; `omit` leaves them out. |
 | `docxToMd.chooseSections` | `true` | Show the outline as checkboxes before converting. |
 | `docxToMd.imagesFolder` | `{name}_images` | Image folder next to the Markdown file; `{name}` is the document name. |
 | `docxToMd.openAfterConversion` | `editor` | After converting one document: `editor`, `preview` or `none`. |

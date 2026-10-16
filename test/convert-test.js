@@ -190,11 +190,27 @@ check('footnotes and endnotes become GFM footnotes', () => {
   eq(out, 'Claim[^1] more[^2]\n\n[^1]: Source: *ISO*\n\n[^2]: An endnote.\n');
 });
 
-check('comments become footnotes with the author, or disappear', () => {
-  const comments = '<w:comment w:id="0" w:author="Anna">' + p(r('Check this')) + '</w:comment>';
-  const body = p('<w:commentRangeStart w:id="0"/>' + r('Text') + '<w:commentRangeEnd w:id="0"/><w:r><w:commentReference w:id="0"/></w:r>');
-  eq(md(body, { comments }), 'Text[^c1]\n\n[^c1]: **Anna:** Check this\n');
-  eq(md(body, { comments }, { comments: 'omit' }), 'Text\n');
+check('comments are shown next to the highlighted text, as footnotes, or not at all', () => {
+  const comments = '<w:comment w:id="0" w:author="Anna">' + p(r('Check this')) + p(r('and this')) + '</w:comment>';
+  const body = p(r('See ') + '<w:commentRangeStart w:id="0"/>' + r('Text') + '<w:commentRangeEnd w:id="0"/><w:r><w:commentReference w:id="0"/></w:r>' + r(' (p. 2)'));
+  eq(md(body, { comments }), 'See <mark>Text</mark> [💬 **Anna:** Check this<br>and this\\] (p. 2)\n');
+  eq(md(body, { comments }, { comments: 'footnotes' }), 'See Text[^c1] (p. 2)\n\n[^c1]: **Anna:** Check this\n\n    and this\n');
+  eq(md(body, { comments }, { comments: 'omit' }), 'See Text (p. 2)\n');
+});
+
+check('inline comments in tables and headings', () => {
+  const comments = '<w:comment w:id="1" w:author="Jan">' + p(r('Agreed')) + '</w:comment>';
+  const commented = (text) => '<w:commentRangeStart w:id="1"/>' + r(text) + '<w:commentRangeEnd w:id="1"/><w:r><w:commentReference w:id="1"/></w:r>';
+  const tbl = '<w:tbl><w:tr><w:tc>' + p(commented('cell')) + '</w:tc></w:tr></w:tbl>';
+  eq(md(tbl, { comments }), '| <mark>cell</mark> [💬 **Jan:** Agreed\\] |\n| --- |\n');
+  eq(md(tbl, { comments }, { tables: 'html' }), '<table>\n<tr><th><mark>cell</mark> [💬 <strong>Jan:</strong> Agreed]</th></tr>\n</table>\n');
+  eq(md(styled('Heading1', commented('Intro')) + p(r('body')), { comments }), '# <mark>Intro</mark>\n\n[💬 **Jan:** Agreed\\]\n\nbody\n');
+});
+
+check('a comment range spanning paragraphs highlights all of them', () => {
+  const comments = '<w:comment w:id="2" w:author="Ola">' + p(r('Both')) + '</w:comment>';
+  const body = p(r('a ') + '<w:commentRangeStart w:id="2"/>' + r('one')) + p(r('two') + '<w:commentRangeEnd w:id="2"/><w:r><w:commentReference w:id="2"/></w:r>') + p(r('three'));
+  eq(md(body, { comments }), 'a <mark>one</mark>\n\n<mark>two</mark> [💬 **Ola:** Both\\]\n\nthree\n');
 });
 
 check('tracked changes: accept, reject, markup', () => {

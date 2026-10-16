@@ -3,6 +3,15 @@
 This file lists user-visible changes to Word to Markdown. The project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-10-16
+
+### Changed
+
+- Comments are shown where they are: the commented text is highlighted and
+  followed by `[💬 **Author:** comment]`, instead of a `[^c1]` reference
+  that VS Code's preview leaves unexplained. The new `inline` value of
+  `docxToMd.comments` is the default; `footnotes` keeps the old output.
+
 ## [0.2.0] - 2026-10-05
 
 ### Added

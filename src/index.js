@@ -11,7 +11,7 @@ const { outline, withoutSections } = require('./sections');
 //   imageDir        folder the image links point to (relative to the .md)
 //   tables          'auto' | 'gfm' | 'html'
 //   trackedChanges  'accept' | 'reject' | 'markup'
-//   comments        'footnotes' | 'omit'
+//   comments        'inline' | 'footnotes' | 'omit'
 //   excludeSections indices from readDocument().sections to leave out
 function convertDocx(buffer, options = {}) {
   return renderDocument(readDocument(buffer, options), options);

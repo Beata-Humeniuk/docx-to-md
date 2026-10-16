@@ -98,7 +98,7 @@ function analyzeField(instr) {
 class Converter {
   constructor(pkg, options = {}) {
     this.pkg = pkg;
-    this.options = Object.assign({ trackedChanges: 'accept', comments: 'footnotes' }, options);
+    this.options = Object.assign({ trackedChanges: 'accept', comments: 'inline' }, options);
     const stylesPart = pkg.relByType(pkg.main, '/styles');
     const numberingPart = pkg.relByType(pkg.main, '/numbering');
     this.styles = loadStyles(stylesPart && pkg.xml(stylesPart));
@@ -112,6 +112,9 @@ class Converter {
     this.warnings = new Map();
     this.noteRefs = [];
     this.notes = new Map();
+    // Comments whose range is open: their text is highlighted when comments
+    // are shown inline.
+    this.openComments = new Set();
   }
 
   warn(code) {
@@ -154,6 +157,9 @@ class Converter {
           if (name && name !== '_GoBack') this.pendingBookmarks.push(name);
           break;
         }
+        case 'w:commentRangeStart':
+        case 'w:commentRangeEnd':
+          this.commentRange(el); break;
         case 'mc:AlternateContent': this.body(child(el, 'mc:Choice') || child(el, 'mc:Fallback'), blocks); break;
         case 'w:altChunk': this.warn('altChunk'); break;
         default: break;
@@ -344,6 +350,9 @@ class Converter {
           if (name && name !== '_GoBack' && !this.suppressed()) this.push(ctx, { t: 'anchor', name });
           break;
         }
+        case 'w:commentRangeStart':
+        case 'w:commentRangeEnd':
+          this.commentRange(el); break;
         case 'm:oMath':
         case 'm:oMathPara':
           if (!this.suppressed()) this.math(el, ctx, base); break;
@@ -351,6 +360,12 @@ class Converter {
         default: break;
       }
     }
+  }
+
+  commentRange(el) {
+    if (this.options.comments !== 'inline') return;
+    if (el.name === 'w:commentRangeStart') this.openComments.add(attr(el, 'w:id'));
+    else this.openComments.delete(attr(el, 'w:id'));
   }
 
   withChange(ctx, change, fn) {
@@ -383,7 +398,8 @@ class Converter {
     const rPr = child(r, 'w:rPr');
     const full = this.runFormat(rPr, base);
     const hidden = !!full.vanish;
-    const fmt = this.changeFmt(ctx, cleanFmt(full));
+    let fmt = this.changeFmt(ctx, cleanFmt(full));
+    if (fmt && this.openComments.size) fmt = Object.assign({}, fmt, { mark: true });
     for (const el of elements(r)) {
       switch (el.name) {
         case 'w:fldChar': this.fieldChar(attr(el, 'w:fldCharType'), ctx); continue;
@@ -566,11 +582,14 @@ class Converter {
       if (!el) { this.notes.set(key, { kind, blocks: [] }); continue; }
       const blocks = [];
       const savedPart = this.part;
+      const savedComments = this.openComments;
       this.part = src.part;
       this.fields = [];
+      this.openComments = new Set();
       this.body(el, blocks);
       this.flushBookmarks(blocks);
       this.part = savedPart;
+      this.openComments = savedComments;
       this.notes.set(key, { kind, blocks, author: kind === 'comment' ? attr(el, 'w:author') || '' : null });
     }
   }

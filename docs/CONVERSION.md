@@ -58,8 +58,17 @@ Tables whose cells are all empty are omitted.
 ## Notes, comments and tracked changes
 
 Footnotes and endnotes become GFM footnotes numbered in order of appearance.
-Comments become footnotes labelled `c1`, `c2`… and start with the author's
-name; `docxToMd.comments: omit` leaves them out.
+Comments follow `docxToMd.comments`:
+
+- `inline` (default): the commented text is highlighted with `<mark>` and the
+  comment follows it, with its author:
+  `<mark>commented text</mark> [💬 **Anna:** the comment\]`. A comment on a
+  heading goes to a paragraph right after it, so the heading's anchor stays
+  the same. This reads the same in the editor and in any preview.
+- `footnotes`: footnotes labelled `c1`, `c2`… starting with the author's name.
+  VS Code's built-in preview does not render footnotes, so there they show
+  as a bare `[^c1]`.
+- `omit`: comments are left out.
 
 Tracked changes follow `docxToMd.trackedChanges`: the text after accepting
 all changes, the text before them, or both, marked with `<ins>` and `<del>`.
